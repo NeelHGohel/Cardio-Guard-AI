@@ -69,10 +69,16 @@ export default function Navbar() {
           </div>
 
           {/* User Profile */}
-          <button className="flex items-center gap-2 rounded-lg border border-[#E5E7EB] bg-white px-3 py-2 text-sm font-medium text-[#6B7280] transition-all hover:border-[#4F46E5] hover:text-[#4F46E5]">
+          <Link href="/about">
+            <button className="flex items-center gap-2 rounded-lg border border-[#E5E7EB] bg-white px-3 py-2 text-sm font-medium text-[#6B7280] transition-all hover:border-[#4F46E5] hover:text-[#4F46E5]">
+              <User size={18} />
+              <span className="hidden sm:inline">About</span>
+            </button>
+          </Link>
+          {/* <button className="flex items-center gap-2 rounded-lg border border-[#E5E7EB] bg-white px-3 py-2 text-sm font-medium text-[#6B7280] transition-all hover:border-[#4F46E5] hover:text-[#4F46E5]">
             <User size={18} />
             <span className="hidden sm:inline">Profile</span>
-          </button>
+          </button> */}
         </div>
       </div>
 
