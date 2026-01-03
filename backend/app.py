@@ -20,7 +20,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# ---------------- LOAD MODEL (SAFE) ----------------
+# ---------------- LOAD MODEL ----------------
 model = joblib.load("model_gb_deploy.pkl")
 
 # ---------------- INPUT SCHEMA ----------------
@@ -38,7 +38,7 @@ class CardioInput(BaseModel):
     active: int
     bmi: float
 
-# ---------------- ROOT ----------------
+# ---------------- ROOT ROUTE ----------------
 @app.get("/")
 def root():
     return {
@@ -47,7 +47,7 @@ def root():
         "accuracy": "72.82%"
     }
 
-# ---------------- PREDICTION ----------------
+# ---------------- PREDICTION ROUTE ----------------
 @app.post("/predict")
 def predict_risk(data: CardioInput):
 
@@ -71,12 +71,12 @@ def predict_risk(data: CardioInput):
 
     response = {"risk": risk}
 
-    # Optional confidence
+    # Optional confidence score
     if hasattr(model, "predict_proba"):
         try:
             proba = model.predict_proba(features)[0]
             response["confidence"] = round(float(max(proba)), 2)
-        except:
+        except Exception:
             pass
 
     return response
