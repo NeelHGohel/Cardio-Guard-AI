@@ -286,6 +286,16 @@ button:focus-visible {
   animation: bounce-subtle 2s ease-in-out infinite;
 }
 
+/* Add these to your existing globals.css */
+
+.animate-stagger-5 {
+  animation: stagger-fade-in 0.6s ease-out 0.5s backwards;
+}
+
+.animate-stagger-6 {
+  animation: stagger-fade-in 0.6s ease-out 0.6s backwards;
+}
+
 /* @import "tailwindcss";
 
 :root {

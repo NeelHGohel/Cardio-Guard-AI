@@ -254,7 +254,7 @@ export default function DashboardPage() {
           <div className="absolute top-10 left-10 w-32 h-32 bg-white/10 rounded-full blur-2xl animate-float"></div>
           <div className="absolute top-40 right-20 w-48 h-48 bg-white/5 rounded-full blur-3xl animate-float-delayed"></div>
           <div className="absolute bottom-20 left-1/3 w-40 h-40 bg-white/10 rounded-full blur-2xl animate-float-slow"></div>
-          
+
           {/* Floating Hearts */}
           <div className="absolute top-20 right-1/4 animate-float-heart">
             <Heart className="text-white/20" size={32} />
@@ -265,7 +265,7 @@ export default function DashboardPage() {
           <div className="absolute top-1/2 left-1/4 animate-float-heart-slow">
             <Heart className="text-white/20" size={28} />
           </div>
-          
+
           {/* Pulse Rings */}
           <div className="absolute top-1/2 right-20 w-24 h-24">
             <div className="absolute inset-0 rounded-full border-2 border-white/30 animate-pulse-ring"></div>
@@ -298,7 +298,8 @@ export default function DashboardPage() {
           {/* Description */}
           <div className="max-w-3xl space-y-4 mb-8 animate-fade-in-delayed">
             <p className="text-xl font-medium text-white/95 leading-relaxed">
-              Advanced cardiovascular risk assessment powered by Gradient Boosting machine learning
+              Advanced cardiovascular risk assessment powered by Gradient
+              Boosting machine learning
             </p>
             {/* <div className="flex flex-wrap items-center gap-4">
               <div className="flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-sm rounded-lg border border-white/20">
@@ -329,10 +330,14 @@ export default function DashboardPage() {
 
         {/* Decorative Grid Pattern */}
         <div className="absolute inset-0 opacity-10">
-          <div className="absolute inset-0" style={{
-            backgroundImage: 'radial-gradient(circle at 2px 2px, white 1px, transparent 0)',
-            backgroundSize: '40px 40px'
-          }}></div>
+          <div
+            className="absolute inset-0"
+            style={{
+              backgroundImage:
+                "radial-gradient(circle at 2px 2px, white 1px, transparent 0)",
+              backgroundSize: "40px 40px",
+            }}
+          ></div>
         </div>
       </div>
 
@@ -396,7 +401,7 @@ export default function DashboardPage() {
               <p className="text-sm font-medium text-[#6B7280] mb-1">
                 Total Predictions
               </p>
-              <p className="text-2xl font-bold text-[#111827] mb-1">1,247</p>
+              <p className="text-2xl font-bold text-[#111827] mb-1">100+</p>
               <p className="text-xs text-[#9CA3AF]">Last 30 days</p>
             </div>
             <div className="p-3 bg-[#F0F9FF] rounded-xl">
