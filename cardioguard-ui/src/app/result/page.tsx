@@ -1,5 +1,7 @@
 "use client";
 
+export const prerender = false;
+
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
