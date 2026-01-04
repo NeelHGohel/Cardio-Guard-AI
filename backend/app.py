@@ -50,36 +50,28 @@ def root():
 
 # ---------------- PREDICTION ROUTE ----------------
 @app.post("/predict")
+@app.post("/predict")
 def predict_risk(data: CardioInput):
-    print("Received data:", data)
+    try:
+        features = np.array([[  
+            data.age,
+            data.gender,
+            data.height,
+            data.weight,
+            data.ap_hi,
+            data.ap_lo,
+            data.cholesterol,
+            data.gluc,
+            data.smoke,
+            data.alco,
+            data.active
+        ]])
 
-    # IMPORTANT: Feature order MUST match training exactly
-    features = np.array([[  
-        data.age,
-        data.gender,
-        data.height,
-        data.weight,
-        data.ap_hi,
-        data.ap_lo,
-        data.cholesterol,
-        data.gluc,
-        data.smoke,
-        data.alco,
-        data.active
-    ]])
+        proba = model.predict_proba(features)[0][1]
 
-    # Probability of cardio disease (class = 1)
-    proba = model.predict_proba(features)[0][1]
+        return {"probability": float(proba)}
 
-    # Risk mapping
-    if proba > 0.6:
-        risk = "High Risk"
-    elif proba > 0.3:
-        risk = "Medium Risk"
-    else:
-        risk = "Low Risk"
+    except Exception as e:
+        print("PREDICT ERROR:", e)
+        return {"error": str(e)}
 
-    return {
-        "risk": risk,
-        "probability": round(float(proba), 3)
-    }
