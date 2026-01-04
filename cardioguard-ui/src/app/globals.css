@@ -1,0 +1,459 @@
+/* ============================================
+   IMPORTS MUST BE AT THE VERY TOP
+   ============================================ */
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
+
+/* ============================================
+   TAILWIND DIRECTIVES
+   ============================================ */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* CSS VARIABLES */
+:root {
+  --primary: #4f46e5;
+  --primary-hover: #4338ca;
+  --secondary: #38bdf8;
+  --accent: #22c55e;
+  --warning: #f59e0b;
+  --error: #ef4444;
+  --background: #f9fafb;
+  --surface: #ffffff;
+  --border: #e5e7eb;
+  --text-primary: #111827;
+  --text-secondary: #6b7280;
+  --text-muted: #9ca3af;
+}
+
+/* BASE STYLES */
+body {
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI",
+    sans-serif;
+  background: var(--background);
+  color: var(--text-primary);
+  @apply antialiased;
+}
+
+/* CARD EFFECTS */
+.card-hover {
+  transition: all 0.2s ease-in-out;
+}
+
+.card-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.1);
+}
+
+/* FOCUS STYLES */
+input:focus,
+select:focus,
+textarea:focus,
+button:focus-visible {
+  @apply outline-none ring-2 ring-offset-2;
+  ring-color: var(--primary);
+}
+
+/* SCROLLBAR */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--background);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
+}
+
+/* ============ ANIMATIONS ============ */
+
+/* Page entrance */
+@keyframes page-enter {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Floating animations */
+@keyframes float {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+  33% {
+    transform: translate(-30px, -30px) scale(1.05);
+  }
+  66% {
+    transform: translate(20px, 20px) scale(0.95);
+  }
+}
+
+@keyframes float-delayed {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+  50% {
+    transform: translate(-40px, 40px) scale(1.1);
+  }
+}
+
+@keyframes float-slow {
+  0%,
+  100% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+  50% {
+    transform: translate(30px, -20px) rotate(5deg);
+  }
+}
+
+/* Floating hearts */
+@keyframes float-heart {
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg) scale(1);
+    opacity: 0.3;
+  }
+  50% {
+    transform: translateY(-30px) rotate(10deg) scale(1.1);
+    opacity: 0.5;
+  }
+}
+
+@keyframes float-heart-delayed {
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+    opacity: 0.25;
+  }
+  50% {
+    transform: translateY(-25px) rotate(-8deg);
+    opacity: 0.4;
+  }
+}
+
+@keyframes float-heart-slow {
+  0%,
+  100% {
+    transform: translateY(0) scale(1) rotate(0deg);
+    opacity: 0.3;
+  }
+  50% {
+    transform: translateY(-35px) scale(1.15) rotate(12deg);
+    opacity: 0.5;
+  }
+}
+
+/* Pulse rings */
+@keyframes pulse-ring {
+  0% {
+    transform: scale(0.7);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1.8);
+    opacity: 0;
+  }
+}
+
+@keyframes pulse-ring-delayed {
+  0% {
+    transform: scale(0.7);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(2);
+    opacity: 0;
+  }
+}
+
+@keyframes pulse-ring-slow {
+  0% {
+    transform: scale(0.9);
+    opacity: 0.6;
+  }
+  100% {
+    transform: scale(1.5);
+    opacity: 0;
+  }
+}
+
+/* Pulse glow */
+@keyframes pulse-glow {
+  0%,
+  100% {
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 40px rgba(255, 255, 255, 0.6),
+      0 0 60px rgba(255, 100, 200, 0.3);
+  }
+}
+
+/* Sparkle effect */
+@keyframes sparkle {
+  0%,
+  100% {
+    opacity: 0;
+    transform: scale(0) rotate(0deg);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.2) rotate(180deg);
+  }
+}
+
+@keyframes sparkle-delayed {
+  0%,
+  100% {
+    opacity: 0;
+    transform: scale(0) rotate(0deg);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(1) rotate(-180deg);
+  }
+}
+
+/* Fade in animations */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fade-in-delayed {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Slide up animations */
+@keyframes slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slide-up-delayed {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Bounce in */
+@keyframes bounce-in {
+  0% {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Heartbeat */
+@keyframes heartbeat {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  10%,
+  30% {
+    transform: scale(1.1);
+  }
+  20%,
+  40% {
+    transform: scale(1);
+  }
+}
+
+/* Pulse quick */
+@keyframes pulse-quick {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(1.1);
+  }
+}
+
+/* Stagger animations */
+@keyframes stagger-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* ============ ANIMATION CLASSES ============ */
+
+.animate-page-enter {
+  animation: page-enter 0.6s ease-out;
+}
+
+.animate-float {
+  animation: float 8s ease-in-out infinite;
+}
+
+.animate-float-delayed {
+  animation: float-delayed 10s ease-in-out infinite;
+}
+
+.animate-float-slow {
+  animation: float-slow 12s ease-in-out infinite;
+}
+
+.animate-float-heart {
+  animation: float-heart 6s ease-in-out infinite;
+}
+
+.animate-float-heart-delayed {
+  animation: float-heart-delayed 7s ease-in-out infinite 1s;
+}
+
+.animate-float-heart-slow {
+  animation: float-heart-slow 8s ease-in-out infinite 2s;
+}
+
+.animate-pulse-ring {
+  animation: pulse-ring 3s ease-out infinite;
+}
+
+.animate-pulse-ring-delayed {
+  animation: pulse-ring-delayed 3s ease-out infinite 1.5s;
+}
+
+.animate-pulse-ring-slow {
+  animation: pulse-ring-slow 4s ease-out infinite 2s;
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+.animate-sparkle {
+  animation: sparkle 3s ease-in-out infinite;
+}
+
+.animate-sparkle-delayed {
+  animation: sparkle-delayed 3s ease-in-out infinite 1.5s;
+}
+
+.animate-fade-in {
+  animation: fade-in 0.8s ease-out;
+}
+
+.animate-fade-in-delayed {
+  animation: fade-in-delayed 1s ease-out 0.3s backwards;
+}
+
+.animate-fade-in-up {
+  animation: fade-in-up 0.8s ease-out 0.5s backwards;
+}
+
+.animate-slide-up {
+  animation: slide-up 0.6s ease-out;
+}
+
+.animate-slide-up-delayed {
+  animation: slide-up-delayed 0.8s ease-out 0.2s backwards;
+}
+
+.animate-bounce-in {
+  animation: bounce-in 0.8s ease-out 0.6s backwards;
+}
+
+.animate-heartbeat {
+  animation: heartbeat 1.5s ease-in-out infinite;
+}
+
+.animate-pulse-quick {
+  animation: pulse-quick 0.5s ease-in-out;
+}
+
+/* Stagger animations */
+.animate-stagger-1 {
+  animation: stagger-fade-in 0.6s ease-out 0.1s backwards;
+}
+
+.animate-stagger-2 {
+  animation: stagger-fade-in 0.6s ease-out 0.2s backwards;
+}
+
+.animate-stagger-3 {
+  animation: stagger-fade-in 0.6s ease-out 0.3s backwards;
+}
+
+.animate-stagger-4 {
+  animation: stagger-fade-in 0.6s ease-out 0.4s backwards;
+}
+
+.animate-stagger-5 {
+  animation: stagger-fade-in 0.6s ease-out 0.5s backwards;
+}
+
+.animate-stagger-6 {
+  animation: stagger-fade-in 0.6s ease-out 0.6s backwards;
+}
+
+.animate-stagger-7 {
+  animation: stagger-fade-in 0.6s ease-out 0.7s backwards;
+}

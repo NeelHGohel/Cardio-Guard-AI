@@ -2,8 +2,8 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { predictRisk } from "@/lib/api";
-import Card from "@/components/Card";
+import { predictRisk } from "./../../lib/api";
+import Card from "./../../components/Card";
 import {
   Activity,
   User,
@@ -25,19 +25,32 @@ export default function PredictPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  // const [form, setForm] = useState({
+  //   age: 0,
+  //   gender: 1,
+  //   height: 0,
+  //   weight: 0,
+  //   ap_hi: 0,
+  //   ap_lo: 0,
+  //   cholesterol: 1,
+  //   gluc: 1,
+  //   smoke: 0,
+  //   alco: 0,
+  //   active: 0,
+  //   bmi: 0,
+  // });
   const [form, setForm] = useState({
-    age: 0,
+    age: 60,
     gender: 1,
-    height: 0,
-    weight: 0,
-    ap_hi: 0,
-    ap_lo: 0,
-    cholesterol: 1,
-    gluc: 1,
-    smoke: 0,
-    alco: 0,
+    height: 168,
+    weight: 90,
+    ap_hi: 165,
+    ap_lo: 100,
+    cholesterol: 3,
+    gluc: 3,
+    smoke: 1,
+    alco: 1,
     active: 0,
-    bmi: 0,
   });
 
   // BMI Auto Calculation
@@ -75,27 +88,27 @@ export default function PredictPage() {
       {/* Header */}
       <div>
         <div className="flex items-center gap-3 mb-2">
-          <div className="p-2 bg-[#FEF2F2] rounded-lg">
-            <Activity className="text-[#EF4444]" size={28} />
+          <div className="p-2 bg-red-50 rounded-lg">
+            <Activity className="text-red-500" size={28} />
           </div>
-          <h2 className="text-3xl font-bold text-[#111827]">
+          <h2 className="text-3xl font-bold text-gray-900">
             Cardiovascular Risk Assessment
           </h2>
         </div>
-        <p className="text-[#6B7280]">
+        <p className="text-gray-600">
           Enter your health details based on recent medical reports. All fields
           are required for accurate prediction.
         </p>
       </div>
 
       {/* Info Banner */}
-      <div className="p-4 rounded-lg bg-[#F0F9FF] border border-[#BAE6FD]">
+      <div className="p-4 rounded-lg bg-blue-50 border border-blue-200">
         <div className="flex items-start gap-3">
           <AlertCircle
-            className="text-[#38BDF8] flex-shrink-0 mt-0.5"
+            className="text-blue-400 flex-shrink-0 mt-0.5"
             size={20}
           />
-          <p className="text-sm text-[#0C4A6E]">
+          <p className="text-sm text-blue-900">
             <span className="font-semibold">Important:</span> Please ensure all
             measurements are accurate and from recent medical examinations.
             Inaccurate data may lead to incorrect predictions.
@@ -108,10 +121,10 @@ export default function PredictPage() {
         {/* Basic Information */}
         <Card>
           <div className="flex items-center gap-3 mb-6">
-            <div className="p-2 bg-[#EEF2FF] rounded-lg">
-              <User className="text-[#4F46E5]" size={24} />
+            <div className="p-2 bg-indigo-50 rounded-lg">
+              <User className="text-indigo-600" size={24} />
             </div>
-            <h3 className="text-xl font-bold text-[#111827]">
+            <h3 className="text-xl font-bold text-gray-900">
               Basic Information
             </h3>
           </div>
@@ -119,7 +132,7 @@ export default function PredictPage() {
           <div className="space-y-4">
             <InputField
               label="Age"
-              icon={<User size={18} className="text-[#6B7280]" />}
+              icon={<User size={18} className="text-gray-600" />}
               value={form.age}
               onChange={(v: any) => update("age", v)}
               unit="years"
@@ -129,7 +142,7 @@ export default function PredictPage() {
 
             <SelectField
               label="Gender"
-              icon={<User size={18} className="text-[#6B7280]" />}
+              icon={<User size={18} className="text-gray-600" />}
               value={form.gender}
               onChange={(v: any) => update("gender", v)}
             >
@@ -139,7 +152,7 @@ export default function PredictPage() {
 
             <InputField
               label="Height"
-              icon={<Ruler size={18} className="text-[#6B7280]" />}
+              icon={<Ruler size={18} className="text-gray-600" />}
               value={form.height}
               onChange={(v: any) => update("height", v)}
               unit="cm"
@@ -149,7 +162,7 @@ export default function PredictPage() {
 
             <InputField
               label="Weight"
-              icon={<Weight size={18} className="text-[#6B7280]" />}
+              icon={<Weight size={18} className="text-gray-600" />}
               value={form.weight}
               onChange={(v: any) => update("weight", v)}
               unit="kg"
@@ -157,19 +170,19 @@ export default function PredictPage() {
               max={300}
             />
 
-            <div className="p-4 rounded-lg bg-[#ECFDF5] border border-[#A7F3D0]">
+            <div className="p-4 rounded-lg bg-green-50 border border-green-200">
               <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center gap-2">
-                  <Calculator size={18} className="text-[#22C55E]" />
-                  <label className="text-sm font-semibold text-[#111827]">
+                  <Calculator size={18} className="text-green-600" />
+                  <label className="text-sm font-semibold text-gray-900">
                     BMI (Body Mass Index)
                   </label>
                 </div>
-                <span className="text-2xl font-bold text-[#22C55E]">
+                <span className="text-2xl font-bold text-green-600">
                   {form.bmi}
                 </span>
               </div>
-              <p className="text-xs text-[#6B7280]">
+              <p className="text-xs text-gray-600">
                 Automatically calculated from height and weight
               </p>
             </div>
@@ -179,10 +192,10 @@ export default function PredictPage() {
         {/* Clinical Measurements */}
         <Card>
           <div className="flex items-center gap-3 mb-6">
-            <div className="p-2 bg-[#FEF2F2] rounded-lg">
-              <Heart className="text-[#EF4444]" size={24} />
+            <div className="p-2 bg-red-50 rounded-lg">
+              <Heart className="text-red-500" size={24} />
             </div>
-            <h3 className="text-xl font-bold text-[#111827]">
+            <h3 className="text-xl font-bold text-gray-900">
               Clinical Measurements
             </h3>
           </div>
@@ -190,7 +203,7 @@ export default function PredictPage() {
           <div className="space-y-4">
             <InputField
               label="Systolic Blood Pressure"
-              icon={<Activity size={18} className="text-[#6B7280]" />}
+              icon={<Activity size={18} className="text-gray-600" />}
               value={form.ap_hi}
               onChange={(v: any) => update("ap_hi", v)}
               unit="mmHg"
@@ -201,7 +214,7 @@ export default function PredictPage() {
 
             <InputField
               label="Diastolic Blood Pressure"
-              icon={<Activity size={18} className="text-[#6B7280]" />}
+              icon={<Activity size={18} className="text-gray-600" />}
               value={form.ap_lo}
               onChange={(v: any) => update("ap_lo", v)}
               unit="mmHg"
@@ -212,7 +225,7 @@ export default function PredictPage() {
 
             <SelectField
               label="Cholesterol Level"
-              icon={<Droplets size={18} className="text-[#6B7280]" />}
+              icon={<Droplets size={18} className="text-gray-600" />}
               value={form.cholesterol}
               onChange={(v: any) => update("cholesterol", v)}
             >
@@ -223,7 +236,7 @@ export default function PredictPage() {
 
             <SelectField
               label="Glucose Level"
-              icon={<Droplets size={18} className="text-[#6B7280]" />}
+              icon={<Droplets size={18} className="text-gray-600" />}
               value={form.gluc}
               onChange={(v: any) => update("gluc", v)}
             >
@@ -238,12 +251,10 @@ export default function PredictPage() {
       {/* Lifestyle Factors */}
       <Card>
         <div className="flex items-center gap-3 mb-6">
-          <div className="p-2 bg-[#ECFDF5] rounded-lg">
-            <Bike className="text-[#22C55E]" size={24} />
+          <div className="p-2 bg-green-50 rounded-lg">
+            <Bike className="text-green-600" size={24} />
           </div>
-          <h3 className="text-xl font-bold text-[#111827]">
-            Lifestyle Factors
-          </h3>
+          <h3 className="text-xl font-bold text-gray-900">Lifestyle Factors</h3>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -275,15 +286,15 @@ export default function PredictPage() {
 
       {/* Error Message */}
       {error && (
-        <div className="p-4 rounded-lg bg-[#FEF2F2] border-2 border-[#EF4444]">
+        <div className="p-4 rounded-lg bg-red-50 border-2 border-red-500">
           <div className="flex items-start gap-3">
             <AlertCircle
-              className="text-[#EF4444] flex-shrink-0 mt-0.5"
+              className="text-red-500 flex-shrink-0 mt-0.5"
               size={20}
             />
             <div>
-              <p className="font-semibold text-[#111827]">Prediction Error</p>
-              <p className="text-sm text-[#6B7280] mt-1">{error}</p>
+              <p className="font-semibold text-gray-900">Prediction Error</p>
+              <p className="text-sm text-gray-600 mt-1">{error}</p>
             </div>
           </div>
         </div>
@@ -298,8 +309,8 @@ export default function PredictPage() {
             flex items-center gap-3 px-8 py-4 rounded-xl font-semibold text-lg text-white transition-all duration-200
             ${
               loading
-                ? "bg-[#9CA3AF] cursor-not-allowed"
-                : "bg-[#4F46E5] hover:bg-[#4338CA] shadow-lg hover:shadow-xl hover:scale-105"
+                ? "bg-gray-400 cursor-not-allowed"
+                : "bg-indigo-600 hover:bg-indigo-700 shadow-lg hover:shadow-xl hover:scale-105"
             }
           `}
         >
@@ -335,7 +346,7 @@ function InputField({
 }: any) {
   return (
     <div>
-      <label className="block text-sm font-semibold text-[#111827] mb-2">
+      <label className="block text-sm font-semibold text-gray-900 mb-2">
         {label}
       </label>
       <div className="relative">
@@ -349,15 +360,15 @@ function InputField({
             onChange(e.target.value === "" ? 0 : Number(e.target.value))
           }
           placeholder="Enter value"
-          className="w-full pl-10 pr-16 py-3 border border-[#E5E7EB] rounded-lg bg-white text-[#111827] font-medium focus:outline-none focus:ring-2 focus:ring-[#4F46E5] focus:border-transparent transition-all placeholder:text-[#D1D5DB]"
+          className="w-full pl-10 pr-16 py-3 border border-gray-200 rounded-lg bg-white text-gray-900 font-medium focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:border-transparent transition-all placeholder:text-gray-300"
         />
         {unit && (
-          <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-[#9CA3AF] font-medium">
+          <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-gray-400 font-medium">
             {unit}
           </span>
         )}
       </div>
-      {hint && <p className="text-xs text-[#9CA3AF] mt-1">{hint}</p>}
+      {hint && <p className="text-xs text-gray-400 mt-1">{hint}</p>}
     </div>
   );
 }
@@ -365,7 +376,7 @@ function InputField({
 function SelectField({ label, icon, value, onChange, children }: any) {
   return (
     <div>
-      <label className="block text-sm font-semibold text-[#111827] mb-2">
+      <label className="block text-sm font-semibold text-gray-900 mb-2">
         {label}
       </label>
       <div className="relative">
@@ -375,7 +386,7 @@ function SelectField({ label, icon, value, onChange, children }: any) {
         <select
           value={value}
           onChange={(e) => onChange(Number(e.target.value))}
-          className="w-full pl-10 pr-4 py-3 border border-[#E5E7EB] rounded-lg bg-white text-[#111827] font-medium appearance-none focus:outline-none focus:ring-2 focus:ring-[#4F46E5] focus:border-transparent transition-all cursor-pointer"
+          className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-lg bg-white text-gray-900 font-medium appearance-none focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:border-transparent transition-all cursor-pointer"
         >
           {children}
         </select>
@@ -409,25 +420,25 @@ function ToggleField({ label, icon, description, value, onChange }: any) {
         p-4 rounded-lg border-2 cursor-pointer transition-all duration-200
         ${
           isActive
-            ? "border-[#4F46E5] bg-[#EEF2FF]"
-            : "border-[#E5E7EB] bg-white hover:border-[#9CA3AF]"
+            ? "border-indigo-600 bg-indigo-50"
+            : "border-gray-200 bg-white hover:border-gray-400"
         }
       `}
     >
       <div className="flex items-start justify-between mb-2">
         <div
           className={`p-2 rounded-lg ${
-            isActive ? "bg-[#4F46E5]" : "bg-[#F3F4F6]"
+            isActive ? "bg-indigo-600" : "bg-gray-200"
           }`}
         >
-          <div className={isActive ? "text-white" : "text-[#6B7280]"}>
+          <div className={isActive ? "text-white" : "text-gray-600"}>
             {icon}
           </div>
         </div>
         <div
           className={`
             w-12 h-6 rounded-full relative transition-all duration-200
-            ${isActive ? "bg-[#4F46E5]" : "bg-[#E5E7EB]"}
+            ${isActive ? "bg-indigo-600" : "bg-gray-200"}
           `}
         >
           <div
@@ -440,12 +451,12 @@ function ToggleField({ label, icon, description, value, onChange }: any) {
       </div>
       <p
         className={`font-semibold mb-1 ${
-          isActive ? "text-[#4F46E5]" : "text-[#111827]"
+          isActive ? "text-indigo-600" : "text-gray-900"
         }`}
       >
         {label}
       </p>
-      <p className="text-xs text-[#6B7280]">{description}</p>
+      <p className="text-xs text-gray-600">{description}</p>
     </div>
   );
 }

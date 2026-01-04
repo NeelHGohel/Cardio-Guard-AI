@@ -1,4 +1,4 @@
-import "./global.css";
+import "./globals.css";
 import { ThemeProvider } from "next-themes";
 import Navbar from "../components/Navbar";
 
