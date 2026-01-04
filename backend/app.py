@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import numpy as np
 import joblib
+import os
 
 # ---------------- APP INIT ----------------
 app = FastAPI(
@@ -20,8 +21,9 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# ---------------- LOAD MODEL ----------------
-model = joblib.load("model_gb_deploy.pkl")
+# ---------------- LOAD MODEL (RENDER SAFE PATH) ----------------
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+model = joblib.load(os.path.join(BASE_DIR, "model_gb_deploy.pkl"))
 
 # ---------------- INPUT SCHEMA ----------------
 class CardioInput(BaseModel):
@@ -36,7 +38,6 @@ class CardioInput(BaseModel):
     smoke: int
     alco: int
     active: int
-    bmi: float
 
 # ---------------- ROOT ROUTE ----------------
 @app.get("/")
@@ -44,14 +45,15 @@ def root():
     return {
         "message": "CardioGuard AI API is running",
         "model": "Gradient Boosting",
-        "accuracy": "72.82%"
+        "status": "OK"
     }
 
 # ---------------- PREDICTION ROUTE ----------------
 @app.post("/predict")
 def predict_risk(data: CardioInput):
 
-    features = np.array([[
+    # IMPORTANT: Feature order MUST match training exactly
+    features = np.array([[  
         data.age,
         data.gender,
         data.height,
@@ -62,21 +64,21 @@ def predict_risk(data: CardioInput):
         data.gluc,
         data.smoke,
         data.alco,
-        data.active,
-        data.bmi
+        data.active
     ]])
 
-    prediction = model.predict(features)[0]
-    risk = "High Risk" if prediction == 1 else "Low Risk"
+    # Probability of cardio disease (class = 1)
+    proba = model.predict_proba(features)[0][1]
 
-    response = {"risk": risk}
+    # Risk mapping
+    if proba > 0.6:
+        risk = "High Risk"
+    elif proba > 0.3:
+        risk = "Medium Risk"
+    else:
+        risk = "Low Risk"
 
-    # Optional confidence score
-    if hasattr(model, "predict_proba"):
-        try:
-            proba = model.predict_proba(features)[0]
-            response["confidence"] = round(float(max(proba)), 2)
-        except Exception:
-            pass
-
-    return response
+    return {
+        "risk": risk,
+        "probability": round(float(proba), 3)
+    }

@@ -51,6 +51,7 @@ export default function PredictPage() {
     smoke: 1,
     alco: 1,
     active: 0,
+    bmi: 0,
   });
 
   // BMI Auto Calculation
