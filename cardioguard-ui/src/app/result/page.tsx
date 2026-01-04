@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import {
   RadialBarChart,
   RadialBar,
@@ -25,11 +25,10 @@ import {
 
 export default function ResultPage() {
   const router = useRouter();
-  const searchParams = useSearchParams();
   const [result, setResult] = useState<any>(null);
 
   useEffect(() => {
-    const data = searchParams.get("data");
+    const data = localStorage.getItem("prediction");
 
     if (!data) {
       router.push("/predict");
@@ -37,13 +36,11 @@ export default function ResultPage() {
     }
 
     try {
-      const parsed = JSON.parse(decodeURIComponent(data));
-      setResult(parsed);
-    } catch (err) {
-      console.error("Failed to parse result:", err);
+      setResult(JSON.parse(data));
+    } catch {
       router.push("/predict");
     }
-  }, [router, searchParams]);
+  }, [router]);
 
   if (!result) {
     return (

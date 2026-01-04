@@ -81,6 +81,7 @@ export default function PredictPage() {
       const result = await predictRisk(payload);
 
       const resultData = encodeURIComponent(JSON.stringify(result));
+      localStorage.setItem("prediction", JSON.stringify(result));
       router.push(`/result?data=${resultData}`);
     } catch (err) {
       console.error(err);
