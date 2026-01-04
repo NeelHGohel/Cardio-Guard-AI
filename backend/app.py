@@ -50,7 +50,6 @@ def root():
 
 # ---------------- PREDICTION ROUTE ----------------
 @app.post("/predict")
-@app.post("/predict")
 def predict_risk(data: CardioInput):
     try:
         features = np.array([[  
@@ -64,7 +63,8 @@ def predict_risk(data: CardioInput):
             data.gluc,
             data.smoke,
             data.alco,
-            data.active
+            data.active,
+            data.bmi
         ]])
 
         proba = model.predict_proba(features)[0][1]
