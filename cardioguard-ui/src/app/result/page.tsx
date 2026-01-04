@@ -4,12 +4,7 @@ export const dynamic = "force-dynamic";
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import {
-  RadialBarChart,
-  RadialBar,
-  PolarAngleAxis,
-  ResponsiveContainer,
-} from "recharts";
+import dynamicImport from "next/dynamic";
 import Card from "./../../components/Card";
 import {
   AlertTriangle,
@@ -25,11 +20,30 @@ import {
   Info,
 } from "lucide-react";
 
+const RadialBarChart = dynamicImport(
+  () => import("recharts").then((mod) => mod.RadialBarChart),
+  { ssr: false }
+);
+const RadialBar = dynamicImport(
+  () => import("recharts").then((mod) => mod.RadialBar),
+  { ssr: false }
+);
+const PolarAngleAxis = dynamicImport(
+  () => import("recharts").then((mod) => mod.PolarAngleAxis),
+  { ssr: false }
+);
+const ResponsiveContainer = dynamicImport(
+  () => import("recharts").then((mod) => mod.ResponsiveContainer),
+  { ssr: false }
+);
+
 export default function ResultPage() {
   const router = useRouter();
   const [result, setResult] = useState<any>(null);
+  const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
+    setIsClient(true);
     const data = localStorage.getItem("prediction");
 
     if (!data) {
@@ -44,7 +58,7 @@ export default function ResultPage() {
     }
   }, [router]);
 
-  if (!result) {
+  if (!isClient || !result) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
@@ -169,29 +183,32 @@ export default function ResultPage() {
 
           {confidence ? (
             <div className="flex flex-col items-center">
-              <ResponsiveContainer width="100%" height={240}>
-                <RadialBarChart
-                  cx="50%"
-                  cy="50%"
-                  innerRadius="70%"
-                  outerRadius="90%"
-                  barSize={16}
-                  data={chartData}
-                  startAngle={180}
-                  endAngle={0}
-                >
-                  <PolarAngleAxis
-                    type="number"
-                    domain={[0, 100]}
-                    tick={false}
-                  />
-                  <RadialBar
-                    background={{ fill: "#F3F4F6" }}
-                    dataKey="value"
-                    cornerRadius={10}
-                  />
-                </RadialBarChart>
-              </ResponsiveContainer>
+              {/* Only render the chart container on the client */}
+              <div className="w-full h-[240px]">
+                <ResponsiveContainer width="100%" height="100%">
+                  <RadialBarChart
+                    cx="50%"
+                    cy="50%"
+                    innerRadius="70%"
+                    outerRadius="90%"
+                    barSize={16}
+                    data={chartData}
+                    startAngle={180}
+                    endAngle={0}
+                  >
+                    <PolarAngleAxis
+                      type="number"
+                      domain={[0, 100]}
+                      tick={false}
+                    />
+                    <RadialBar
+                      background={{ fill: "#F3F4F6" }}
+                      dataKey="value"
+                      cornerRadius={10}
+                    />
+                  </RadialBarChart>
+                </ResponsiveContainer>
+              </div>
 
               <div className="text-center mt-4">
                 <p className="text-5xl font-bold text-gray-900">
