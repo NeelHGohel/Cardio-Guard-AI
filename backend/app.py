@@ -51,6 +51,7 @@ def root():
 # ---------------- PREDICTION ROUTE ----------------
 @app.post("/predict")
 def predict_risk(data: CardioInput):
+    print("Received data:", data)
 
     # IMPORTANT: Feature order MUST match training exactly
     features = np.array([[  
