@@ -38,6 +38,7 @@ class CardioInput(BaseModel):
     smoke: int
     alco: int
     active: int
+    bmi: int
 
 # ---------------- ROOT ROUTE ----------------
 @app.get("/")
