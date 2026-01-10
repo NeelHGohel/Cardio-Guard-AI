@@ -1,470 +1,1076 @@
+// "use client";
+
+// import { useState, useEffect, useRef } from "react";
+// import { predictRisk } from "../../lib/api";
+// import Card from "../../components/Card";
+// import Input from "../../components/Input";
+// import Select from "../../components/Select";
+// import {
+//   Activity,
+//   User,
+//   Stethoscope,
+//   Bike,
+//   Cigarette,
+//   Wine,
+//   Loader2,
+//   ArrowRight,
+//   AlertCircle,
+// } from "lucide-react";
+
+// import { PredictionResult } from "../result/ResultClient";
+// import { PredictionResponse } from "../../lib/predictionSchema";
+
+// type NumOrEmpty = number | "";
+
+// type PredictionResultProps = {
+//   result: PredictionResponse;
+//   inputData: Record<string, any>;
+//   onReset?: () => void;
+// };
+
+// export default function PredictPage() {
+//   const [loading, setLoading] = useState(false);
+//   const [error, setError] = useState<string | null>(null);
+//   const [result, setResult] = useState<any | null>(null);
+//   const resultRef = useRef<HTMLDivElement>(null);
+
+//   const [form, setForm] = useState<{
+//     age: NumOrEmpty;
+//     gender: number;
+//     height: NumOrEmpty;
+//     weight: NumOrEmpty;
+//     ap_hi: NumOrEmpty;
+//     ap_lo: NumOrEmpty;
+//     cholesterol: number;
+//     gluc: number;
+//     smoke: number;
+//     alco: number;
+//     active: number;
+//     bmi: NumOrEmpty;
+//   }>({
+//     age: "",
+//     gender: 1,
+//     height: "",
+//     weight: "",
+//     ap_hi: "",
+//     ap_lo: "",
+//     cholesterol: 1,
+//     gluc: 1,
+//     smoke: 0,
+//     alco: 0,
+//     active: 0,
+//     bmi: "",
+//   });
+
+//   /* ---------------- BMI AUTO CALC ---------------- */
+//   useEffect(() => {
+//     if (form.height && form.weight) {
+//       const h = Number(form.height) / 100;
+//       const bmi = Number(form.weight) / (h * h);
+//       setForm((p) => ({ ...p, bmi: Number(bmi.toFixed(1)) }));
+//     } else {
+//       setForm((p) => ({ ...p, bmi: "" }));
+//     }
+//   }, [form.height, form.weight]);
+
+//   const update = (k: string, v: NumOrEmpty | number) =>
+//     setForm((p) => ({ ...p, [k]: v }));
+
+//   /* ---------------- SUBMIT ---------------- */
+//   const submit = async () => {
+//     setError(null);
+//     setLoading(true);
+//     setResult(null);
+
+//     try {
+//       await new Promise((r) => setTimeout(r, 1200)); // UX delay
+
+//       const res = await predictRisk({
+//         ...form,
+//         age: Number(form.age),
+//         height: Number(form.height),
+//         weight: Number(form.weight),
+//         ap_hi: Number(form.ap_hi),
+//         ap_lo: Number(form.ap_lo),
+//         bmi: Number(form.bmi),
+//       });
+
+//       setResult(res);
+
+//       setTimeout(() => {
+//         resultRef.current?.scrollIntoView({ behavior: "smooth" });
+//       }, 200);
+//     } catch (e) {
+//       setError("Prediction failed. Please verify all inputs.");
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
+
+//   return (
+//     <div className="max-w-6xl mx-auto px-4 py-16 space-y-20">
+//       {/* ---------------- FORM SECTION ---------------- */}
+//       {!result && (
+//         <>
+//           <section className="space-y-6">
+//             <h1 className="text-4xl font-bold text-slate-900">
+//               Cardiovascular Risk Assessment
+//             </h1>
+//             <p className="text-slate-600 max-w-2xl">
+//               Enter standard clinical parameters. The Gradient Boosting model
+//               analyzes these indicators to estimate cardiovascular risk.
+//             </p>
+//           </section>
+
+//           {/* Patient Profile */}
+//           <Card>
+//             <SectionHeader icon={<User />} title="Patient Profile" />
+//             <div className="grid md:grid-cols-2 gap-6 py-6">
+//               <Input
+//                 label="Age"
+//                 type="number"
+//                 placeholder="Enter Age"
+//                 value={form.age}
+//                 onChange={(e) =>
+//                   update("age", e.target.value === "" ? "" : +e.target.value)
+//                 }
+//               />
+//               <Select
+//                 label="Gender"
+//                 value={form.gender}
+//                 onChange={(e) => update("gender", +e.target.value)}
+//                 options={[
+//                   { value: 1, label: "Male" },
+//                   { value: 0, label: "Female" },
+//                 ]}
+//               />
+//               <Input
+//                 label="Height (cm)"
+//                 type="number"
+//                 placeholder="Enter Height "
+//                 value={form.height}
+//                 onChange={(e) =>
+//                   update("height", e.target.value === "" ? "" : +e.target.value)
+//                 }
+//               />
+//               <Input
+//                 label="Weight (kg)"
+//                 type="number"
+//                 placeholder="Enter Weight"
+//                 value={form.weight}
+//                 onChange={(e) =>
+//                   update("weight", e.target.value === "" ? "" : +e.target.value)
+//                 }
+//               />
+//             </div>
+//           </Card>
+
+//           {/* Clinical */}
+//           <Card>
+//             <SectionHeader icon={<Stethoscope />} title="Clinical Vitals" />
+//             <div className="grid md:grid-cols-2 gap-6 py-6">
+//               <Input
+//                 label="Systolic BP (High BP)"
+//                 type="number"
+//                 placeholder="Enter BP (High)"
+//                 value={form.ap_hi}
+//                 onChange={(e) =>
+//                   update("ap_hi", e.target.value === "" ? "" : +e.target.value)
+//                 }
+//               />
+//               <Input
+//                 label="Diastolic BP (Low BP)"
+//                 placeholder="Enter BP (Low)"
+//                 type="number"
+//                 value={form.ap_lo}
+//                 onChange={(e) =>
+//                   update("ap_lo", e.target.value === "" ? "" : +e.target.value)
+//                 }
+//               />
+//               <Select
+//                 label="Cholesterol"
+//                 value={form.cholesterol}
+//                 onChange={(e) => update("cholesterol", +e.target.value)}
+//                 options={[
+//                   { value: 1, label: "Normal" },
+//                   { value: 2, label: "Above Normal" },
+//                   { value: 3, label: "Well Above Normal" },
+//                 ]}
+//               />
+//               <Select
+//                 label="Glucose"
+//                 value={form.gluc}
+//                 onChange={(e) => update("gluc", +e.target.value)}
+//                 options={[
+//                   { value: 1, label: "Normal" },
+//                   { value: 2, label: "Above Normal" },
+//                   { value: 3, label: "Well Above Normal" },
+//                 ]}
+//               />
+//             </div>
+//           </Card>
+
+//           {/* Lifestyle */}
+//           <Card className="">
+//             <SectionHeader icon={<Bike />} title="Lifestyle Factors" />
+//             <div className="py-6">
+//               <Toggle
+//                 label="Smoker"
+//                 active={form.smoke === 1}
+//                 onClick={() => update("smoke", form.smoke ? 0 : 1)}
+//                 icon={<Cigarette />}
+//               />
+//               <Toggle
+//                 label="Alcohol Consumption"
+//                 active={form.alco === 1}
+//                 onClick={() => update("alco", form.alco ? 0 : 1)}
+//                 icon={<Wine />}
+//               />
+//               <Toggle
+//                 label="Physically Active"
+//                 active={form.active === 1}
+//                 onClick={() => update("active", form.active ? 0 : 1)}
+//                 icon={<Activity />}
+//               />
+//             </div>
+//           </Card>
+
+//           <div className="">
+//             <button
+//               onClick={submit}
+//               disabled={loading}
+//               className="w-full flex items-center justify-center gap-3 bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-4 rounded-xl"
+//             >
+//               {loading ? (
+//                 <>
+//                   <Loader2 className="animate-spin" />
+//                   Analyzing…
+//                 </>
+//               ) : (
+//                 <>
+//                   Run Prediction
+//                   <ArrowRight />
+//                 </>
+//               )}
+//             </button>
+
+//             {error && (
+//               <div className="mt-4 flex items-center gap-2 text-rose-600 text-sm">
+//                 <AlertCircle size={16} /> {error}
+//               </div>
+//             )}
+//           </div>
+//         </>
+//       )}
+
+//       {/* ---------------- RESULT SECTION ---------------- */}
+//       {result && (
+//         <div ref={resultRef} className="pt-12">
+//           <PredictionResult
+//             result={result}
+//             onReset={() => {
+//               setResult(null);
+//               window.scrollTo({ top: 0, behavior: "smooth" });
+//             }}
+//           />
+//         </div>
+//       )}
+//     </div>
+//   );
+// }
+
+// /* ---------------- HELPERS ---------------- */
+
+// function SectionHeader({ icon, title }: any) {
+//   return (
+//     <div className="flex items-center gap-4">
+//       <div className="p-3 bg-slate-900 text-white rounded-xl">{icon}</div>
+//       <h2 className="text-2xl font-bold">{title}</h2>
+//     </div>
+//   );
+// }
+
+// function Toggle({ label, active, onClick, icon }: any) {
+//   return (
+//     <div
+//       onClick={onClick}
+//       className={`flex items-center justify-between p-4 rounded-xl border cursor-pointer
+//         ${
+//           active ? "bg-slate-100 border-slate-300" : "bg-white border-slate-200"
+//         }`}
+//     >
+//       <div className="flex items-center gap-4">
+//         <div
+//           className={`p-3 rounded-lg ${
+//             active ? "bg-indigo-600 text-white" : "bg-slate-100 text-slate-500"
+//           }`}
+//         >
+//           {icon}
+//         </div>
+//         <span className="font-semibold">{label}</span>
+//       </div>
+//       <div
+//         className={`w-5 h-5 rounded-full ${
+//           active ? "bg-indigo-600" : "bg-slate-300"
+//         }`}
+//       />
+//     </div>
+//   );
+// }
+// "use client";
+
+// import { useState, useEffect, useRef } from "react";
+// import { predictRisk } from "../../lib/api";
+// import Card from "../../components/Card";
+// import Input from "../../components/Input";
+// import Select from "../../components/Select";
+// import {
+//   Activity,
+//   User,
+//   Stethoscope,
+//   Bike,
+//   Cigarette,
+//   Wine,
+//   Loader2,
+//   ArrowRight,
+//   AlertCircle,
+// } from "lucide-react";
+
+// import { PredictionResult } from "../result/ResultClient";
+// import { PredictionResponse } from "../../lib/predictionSchema";
+
+// type NumOrEmpty = number | "";
+
+// export default function PredictPage() {
+//   const [loading, setLoading] = useState(false);
+//   const [error, setError] = useState<string | null>(null);
+//   const [result, setResult] = useState<PredictionResponse | null>(null);
+//   const resultRef = useRef<HTMLDivElement>(null);
+
+//   const [form, setForm] = useState<{
+//     age: NumOrEmpty;
+//     gender: number;
+//     height: NumOrEmpty;
+//     weight: NumOrEmpty;
+//     ap_hi: NumOrEmpty;
+//     ap_lo: NumOrEmpty;
+//     cholesterol: number;
+//     gluc: number;
+//     smoke: number;
+//     alco: number;
+//     active: number;
+//     bmi: NumOrEmpty;
+//   }>({
+//     age: "",
+//     gender: 1,
+//     height: "",
+//     weight: "",
+//     ap_hi: "",
+//     ap_lo: "",
+//     cholesterol: 1,
+//     gluc: 1,
+//     smoke: 0,
+//     alco: 0,
+//     active: 0,
+//     bmi: "",
+//   });
+
+//   /* ---------------- BMI AUTO CALC ---------------- */
+//   useEffect(() => {
+//     if (form.height && form.weight) {
+//       const h = Number(form.height) / 100;
+//       const bmi = Number(form.weight) / (h * h);
+//       setForm((p) => ({ ...p, bmi: Number(bmi.toFixed(1)) }));
+//     } else {
+//       setForm((p) => ({ ...p, bmi: "" }));
+//     }
+//   }, [form.height, form.weight]);
+
+//   const update = (k: string, v: NumOrEmpty | number) =>
+//     setForm((p) => ({ ...p, [k]: v }));
+
+//   /* ---------------- SUBMIT ---------------- */
+//   const submit = async () => {
+//     setError(null);
+//     setLoading(true);
+//     setResult(null);
+
+//     try {
+//       await new Promise((r) => setTimeout(r, 1200)); // UX delay
+
+//       const res = await predictRisk({
+//         ...form,
+//         age: Number(form.age),
+//         height: Number(form.height),
+//         weight: Number(form.weight),
+//         ap_hi: Number(form.ap_hi),
+//         ap_lo: Number(form.ap_lo),
+//         bmi: Number(form.bmi),
+//       });
+
+//       setResult(res);
+
+//       setTimeout(() => {
+//         resultRef.current?.scrollIntoView({ behavior: "smooth" });
+//       }, 200);
+//     } catch (e) {
+//       setError("Prediction failed. Please verify all inputs.");
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
+
+//   return (
+//     <div className="max-w-6xl mx-auto px-4 py-16 space-y-20">
+//       {/* ---------------- FORM SECTION ---------------- */}
+//       {!result && (
+//         <>
+//           <section className="space-y-6">
+//             <h1 className="text-4xl font-bold text-slate-900">
+//               Cardiovascular Risk Assessment
+//             </h1>
+//             <p className="text-slate-600 max-w-2xl">
+//               Enter standard clinical parameters. The Gradient Boosting model
+//               analyzes these indicators to estimate cardiovascular risk.
+//             </p>
+//           </section>
+
+//           {/* Patient Profile */}
+//           <Card>
+//             <SectionHeader icon={<User />} title="Patient Profile" />
+//             <div className="grid md:grid-cols-2 gap-6 py-6">
+//               <Input
+//                 label="Age"
+//                 type="number"
+//                 placeholder="Enter Age"
+//                 value={form.age}
+//                 onChange={(e) =>
+//                   update("age", e.target.value === "" ? "" : +e.target.value)
+//                 }
+//               />
+//               <Select
+//                 label="Gender"
+//                 value={form.gender}
+//                 onChange={(e) => update("gender", +e.target.value)}
+//                 options={[
+//                   { value: 1, label: "Male" },
+//                   { value: 0, label: "Female" },
+//                 ]}
+//               />
+//               <Input
+//                 label="Height (cm)"
+//                 type="number"
+//                 placeholder="Enter Height"
+//                 value={form.height}
+//                 onChange={(e) =>
+//                   update("height", e.target.value === "" ? "" : +e.target.value)
+//                 }
+//               />
+//               <Input
+//                 label="Weight (kg)"
+//                 type="number"
+//                 placeholder="Enter Weight"
+//                 value={form.weight}
+//                 onChange={(e) =>
+//                   update("weight", e.target.value === "" ? "" : +e.target.value)
+//                 }
+//               />
+//               <Input
+//                 label="BMI (Auto-calculated)"
+//                 type="number"
+//                 value={form.bmi}
+//                 readOnly
+//               />
+//             </div>
+//           </Card>
+
+//           {/* Clinical */}
+//           <Card>
+//             <SectionHeader icon={<Stethoscope />} title="Clinical Vitals" />
+//             <div className="grid md:grid-cols-2 gap-6 py-6">
+//               <Input
+//                 label="Systolic BP"
+//                 type="number"
+//                 value={form.ap_hi}
+//                 onChange={(e) =>
+//                   update("ap_hi", e.target.value === "" ? "" : +e.target.value)
+//                 }
+//               />
+//               <Input
+//                 label="Diastolic BP"
+//                 type="number"
+//                 value={form.ap_lo}
+//                 onChange={(e) =>
+//                   update("ap_lo", e.target.value === "" ? "" : +e.target.value)
+//                 }
+//               />
+//               <Select
+//                 label="Cholesterol"
+//                 value={form.cholesterol}
+//                 onChange={(e) => update("cholesterol", +e.target.value)}
+//                 options={[
+//                   { value: 1, label: "Normal" },
+//                   { value: 2, label: "Above Normal" },
+//                   { value: 3, label: "Well Above Normal" },
+//                 ]}
+//               />
+//               <Select
+//                 label="Glucose"
+//                 value={form.gluc}
+//                 onChange={(e) => update("gluc", +e.target.value)}
+//                 options={[
+//                   { value: 1, label: "Normal" },
+//                   { value: 2, label: "Above Normal" },
+//                   { value: 3, label: "Well Above Normal" },
+//                 ]}
+//               />
+//             </div>
+//           </Card>
+
+//           {/* Lifestyle */}
+//           <Card>
+//             <SectionHeader icon={<Bike />} title="Lifestyle Factors" />
+//             <div className="py-6">
+//               <Toggle
+//                 label="Smoker"
+//                 active={form.smoke === 1}
+//                 onClick={() => update("smoke", form.smoke ? 0 : 1)}
+//                 icon={<Cigarette />}
+//               />
+//               <Toggle
+//                 label="Alcohol Consumption"
+//                 active={form.alco === 1}
+//                 onClick={() => update("alco", form.alco ? 0 : 1)}
+//                 icon={<Wine />}
+//               />
+//               <Toggle
+//                 label="Physically Active"
+//                 active={form.active === 1}
+//                 onClick={() => update("active", form.active ? 0 : 1)}
+//                 icon={<Activity />}
+//               />
+//             </div>
+//           </Card>
+
+//           <button
+//             onClick={submit}
+//             disabled={loading}
+//             className="w-full flex items-center justify-center gap-3 bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-4 rounded-xl"
+//           >
+//             {loading ? (
+//               <>
+//                 <Loader2 className="animate-spin" />
+//                 Analyzing…
+//               </>
+//             ) : (
+//               <>
+//                 Run Prediction
+//                 <ArrowRight />
+//               </>
+//             )}
+//           </button>
+
+//           {error && (
+//             <div className="mt-4 flex items-center gap-2 text-rose-600 text-sm">
+//               <AlertCircle size={16} /> {error}
+//             </div>
+//           )}
+//         </>
+//       )}
+
+//       {/* ---------------- RESULT SECTION ---------------- */}
+//       {result && (
+//         <div ref={resultRef} className="pt-12">
+//           <PredictionResult
+//             result={result}
+//             inputData={{
+//               Age: Number(form.age),
+//               Gender: form.gender === 1 ? "Male" : "Female",
+//               Height: `${form.height} cm`,
+//               Weight: `${form.weight} kg`,
+//               BMI: form.bmi,
+//               "Systolic BP": `${form.ap_hi} mmHg`,
+//               "Diastolic BP": `${form.ap_lo} mmHg`,
+//               Cholesterol:
+//                 form.cholesterol === 1
+//                   ? "Normal"
+//                   : form.cholesterol === 2
+//                   ? "Above Normal"
+//                   : "Well Above Normal",
+//               Glucose:
+//                 form.gluc === 1
+//                   ? "Normal"
+//                   : form.gluc === 2
+//                   ? "Above Normal"
+//                   : "Well Above Normal",
+//               Smoker: form.smoke ? "Yes" : "No",
+//               Alcohol: form.alco ? "Yes" : "No",
+//               "Physically Active": form.active ? "Yes" : "No",
+//             }}
+//             onReset={() => {
+//               setResult(null);
+//               window.scrollTo({ top: 0, behavior: "smooth" });
+//             }}
+//           />
+//         </div>
+//       )}
+//     </div>
+//   );
+// }
+
+// /* ---------------- HELPERS ---------------- */
+
+// function SectionHeader({ icon, title }: any) {
+//   return (
+//     <div className="flex items-center gap-4">
+//       <div className="p-3 bg-slate-900 text-white rounded-xl">{icon}</div>
+//       <h2 className="text-2xl font-bold">{title}</h2>
+//     </div>
+//   );
+// }
+
+// function Toggle({ label, active, onClick, icon }: any) {
+//   return (
+//     <div
+//       onClick={onClick}
+//       className={`flex items-center justify-between p-4 rounded-xl border cursor-pointer ${
+//         active ? "bg-slate-100 border-slate-300" : "bg-white border-slate-200"
+//       }`}
+//     >
+//       <div className="flex items-center gap-4">
+//         <div
+//           className={`p-3 rounded-lg ${
+//             active ? "bg-indigo-600 text-white" : "bg-slate-100 text-slate-500"
+//           }`}
+//         >
+//           {icon}
+//         </div>
+//         <span className="font-semibold">{label}</span>
+//       </div>
+//       <div
+//         className={`w-5 h-5 rounded-full ${
+//           active ? "bg-indigo-600" : "bg-slate-300"
+//         }`}
+//       />
+//     </div>
+//   );
+// }
+
 "use client";
 
-import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
-import { predictRisk } from "./../../lib/api";
-import Card from "./../../components/Card";
+import type React from "react";
+
+import { useState, useEffect, useRef } from "react";
+import { predictRisk } from "../../lib/api";
+import Card from "../../components/Card";
+import Input from "../../components/Input";
+import Select from "../../components/Select";
 import {
   Activity,
   User,
-  Ruler,
-  Weight,
-  Heart,
-  Droplets,
+  Stethoscope,
+  Bike,
   Cigarette,
   Wine,
-  Bike,
-  AlertCircle,
   Loader2,
   ArrowRight,
-  Calculator,
+  AlertCircle,
 } from "lucide-react";
 
+import { PredictionResult } from "../result/ResultClient";
+import { PredictionResponse } from "../../lib/predictionSchema";
+
+type NumOrEmpty = number | "";
+
+interface SectionHeaderProps {
+  icon: React.ReactNode;
+  title: string;
+  subtitle?: string;
+}
+
+interface ToggleProps {
+  label: string;
+  active: boolean;
+  onClick: () => void;
+  icon: React.ReactNode;
+}
+
 export default function PredictPage() {
-  const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [result, setResult] = useState<PredictionResponse | null>(null);
+  const resultRef = useRef<HTMLDivElement>(null);
 
-  const [form, setForm] = useState({
-    age: 0,
+  const [form, setForm] = useState<{
+    age: NumOrEmpty;
+    gender: number;
+    height: NumOrEmpty;
+    weight: NumOrEmpty;
+    ap_hi: NumOrEmpty;
+    ap_lo: NumOrEmpty;
+    cholesterol: number;
+    gluc: number;
+    smoke: number;
+    alco: number;
+    active: number;
+    bmi: NumOrEmpty;
+  }>({
+    age: "",
     gender: 1,
-    height: 0,
-    weight: 0,
-    ap_hi: 0,
-    ap_lo: 0,
+    height: "",
+    weight: "",
+    ap_hi: "",
+    ap_lo: "",
     cholesterol: 1,
     gluc: 1,
     smoke: 0,
     alco: 0,
     active: 0,
-    bmi: 0,
+    bmi: "",
   });
 
-  // BMI Auto Calculation
+  /* ---------------- BMI AUTO CALC ---------------- */
   useEffect(() => {
-    if (form.height > 0 && form.weight > 0) {
-      const heightM = form.height / 100;
-      const bmi = form.weight / (heightM * heightM);
-      setForm((prev) => ({ ...prev, bmi: Number(bmi.toFixed(1)) }));
+    if (form.height && form.weight) {
+      const h = Number(form.height) / 100;
+      const bmi = Number(form.weight) / (h * h);
+      setForm((p) => ({ ...p, bmi: Number(bmi.toFixed(1)) }));
+    } else {
+      setForm((p) => ({ ...p, bmi: "" }));
     }
   }, [form.height, form.weight]);
 
-  const update = (key: string, value: number) => {
-    setForm({ ...form, [key]: value });
-  };
+  const update = (k: string, v: NumOrEmpty | number) =>
+    setForm((p) => ({ ...p, [k]: v }));
 
-  // Submit Handler
+  /* ---------------- SUBMIT ---------------- */
   const submit = async () => {
-    setLoading(true);
     setError(null);
+    setLoading(true);
+    setResult(null);
 
     try {
-      // 🔴 Ensure BMI is calculated and numeric
-      const payload = {
+      await new Promise((r) => setTimeout(r, 1200)); // UX delay
+
+      const res = await predictRisk({
         ...form,
         age: Number(form.age),
-        gender: Number(form.gender),
         height: Number(form.height),
         weight: Number(form.weight),
         ap_hi: Number(form.ap_hi),
         ap_lo: Number(form.ap_lo),
-        cholesterol: Number(form.cholesterol),
-        gluc: Number(form.gluc),
-        smoke: Number(form.smoke),
-        alco: Number(form.alco),
-        active: Number(form.active),
-        bmi: Number(form.bmi), // ✅ THIS IS THE KEY LINE
-      };
+        bmi: Number(form.bmi),
+      });
 
-      console.log("Sending payload:", payload); // ✅ debug once
+      setResult(res);
 
-      const result = await predictRisk(payload);
-
-      const resultData = encodeURIComponent(JSON.stringify(result));
-      localStorage.setItem("prediction", JSON.stringify(result));
-      router.push(`/result?data=${resultData}`);
-    } catch (err) {
-      console.error(err);
-      setError("Unable to generate prediction. Please try again.");
+      setTimeout(() => {
+        resultRef.current?.scrollIntoView({ behavior: "smooth" });
+      }, 200);
+    } catch (e) {
+      setError("Prediction failed. Please verify all inputs.");
+    } finally {
+      setLoading(false);
     }
-
-    setLoading(false);
   };
 
   return (
-    <div className="max-w-6xl mx-auto space-y-8">
-      {/* Header */}
-      <div>
-        <div className="flex items-center gap-3 mb-2">
-          <div className="p-2 bg-red-50 rounded-lg">
-            <Activity className="text-red-500" size={28} />
-          </div>
-          <h2 className="text-3xl font-bold text-gray-900">
-            Cardiovascular Risk Assessment
-          </h2>
-        </div>
-        <p className="text-gray-600">
-          Enter your health details based on recent medical reports. All fields
-          are required for accurate prediction.
-        </p>
-      </div>
-
-      {/* Info Banner */}
-      <div className="p-4 rounded-lg bg-blue-50 border border-blue-200">
-        <div className="flex items-start gap-3">
-          <AlertCircle
-            className="text-blue-400 flex-shrink-0 mt-0.5"
-            size={20}
-          />
-          <p className="text-sm text-blue-900">
-            <span className="font-semibold">Important:</span> Please ensure all
-            measurements are accurate and from recent medical examinations.
-            Inaccurate data may lead to incorrect predictions.
-          </p>
-        </div>
-      </div>
-
-      {/* Form Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Basic Information */}
-        <Card>
-          <div className="flex items-center gap-3 mb-6">
-            <div className="p-2 bg-indigo-50 rounded-lg">
-              <User className="text-indigo-600" size={24} />
-            </div>
-            <h3 className="text-xl font-bold text-gray-900">
-              Basic Information
-            </h3>
-          </div>
-
-          <div className="space-y-4">
-            <InputField
-              label="Age"
-              icon={<User size={18} className="text-gray-600" />}
-              value={form.age}
-              onChange={(v: any) => update("age", v)}
-              unit="years"
-              min={1}
-              max={120}
-            />
-
-            <SelectField
-              label="Gender"
-              icon={<User size={18} className="text-gray-600" />}
-              value={form.gender}
-              onChange={(v: any) => update("gender", v)}
-            >
-              <option value={1}>Male</option>
-              <option value={0}>Female</option>
-            </SelectField>
-
-            <InputField
-              label="Height"
-              icon={<Ruler size={18} className="text-gray-600" />}
-              value={form.height}
-              onChange={(v: any) => update("height", v)}
-              unit="cm"
-              min={50}
-              max={250}
-            />
-
-            <InputField
-              label="Weight"
-              icon={<Weight size={18} className="text-gray-600" />}
-              value={form.weight}
-              onChange={(v: any) => update("weight", v)}
-              unit="kg"
-              min={20}
-              max={300}
-            />
-
-            <div className="p-4 rounded-lg bg-green-50 border border-green-200">
-              <div className="flex items-center justify-between mb-2">
-                <div className="flex items-center gap-2">
-                  <Calculator size={18} className="text-green-600" />
-                  <label className="text-sm font-semibold text-gray-900">
-                    BMI (Body Mass Index)
-                  </label>
-                </div>
-                <span className="text-2xl font-bold text-green-600">
-                  {form.bmi}
-                </span>
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
+      <div className="max-w-5xl mx-auto px-4 py-12 space-y-12">
+        {/* ---------------- FORM SECTION ---------------- */}
+        {!result && (
+          <>
+            <section className="space-y-4 text-center">
+              <div className="inline-flex items-center gap-2 px-4 py-2 bg-indigo-100 text-indigo-700 rounded-full text-sm font-semibold mb-4">
+                <Activity size={16} />
+                AI-Powered Health Assessment
               </div>
-              <p className="text-xs text-gray-600">
-                Automatically calculated from height and weight
+              <h1 className="text-5xl font-bold bg-gradient-to-r from-slate-900 via-indigo-900 to-slate-900 bg-clip-text text-transparent">
+                Cardiovascular Risk Assessment
+              </h1>
+              <p className="text-slate-600 max-w-2xl mx-auto text-lg">
+                Enter clinical parameters below. Our advanced Gradient Boosting
+                model analyzes these indicators to provide an accurate
+                cardiovascular risk estimate.
               </p>
-            </div>
-          </div>
-        </Card>
+            </section>
 
-        {/* Clinical Measurements */}
-        <Card>
-          <div className="flex items-center gap-3 mb-6">
-            <div className="p-2 bg-red-50 rounded-lg">
-              <Heart className="text-red-500" size={24} />
-            </div>
-            <h3 className="text-xl font-bold text-gray-900">
-              Clinical Measurements
-            </h3>
-          </div>
+            {/* Patient Profile */}
+            <Card>
+              <SectionHeader
+                icon={<User />}
+                title="Patient Profile"
+                subtitle="Basic demographic information"
+              />
+              <div className="grid md:grid-cols-2 gap-5 py-6">
+                <Input
+                  label="Age"
+                  type="number"
+                  placeholder="e.g., 45"
+                  value={form.age}
+                  onChange={(e) =>
+                    update("age", e.target.value === "" ? "" : +e.target.value)
+                  }
+                />
+                <Select
+                  label="Gender"
+                  value={form.gender}
+                  onChange={(e) => update("gender", +e.target.value)}
+                  options={[
+                    { value: 1, label: "Male" },
+                    { value: 0, label: "Female" },
+                  ]}
+                />
+                <Input
+                  label="Height (cm)"
+                  type="number"
+                  placeholder="e.g., 170"
+                  value={form.height}
+                  onChange={(e) =>
+                    update(
+                      "height",
+                      e.target.value === "" ? "" : +e.target.value
+                    )
+                  }
+                />
+                <Input
+                  label="Weight (kg)"
+                  type="number"
+                  placeholder="e.g., 70"
+                  value={form.weight}
+                  onChange={(e) =>
+                    update(
+                      "weight",
+                      e.target.value === "" ? "" : +e.target.value
+                    )
+                  }
+                />
+                <div className="md:col-span-2">
+                  <Input
+                    label="BMI (Auto-calculated)"
+                    type="number"
+                    value={form.bmi}
+                    readOnly
+                  />
+                  {form.bmi && (
+                    <p className="text-xs text-slate-500 mt-1.5 ml-1">
+                      {form.bmi < 18.5 && "Underweight"}
+                      {form.bmi >= 18.5 && form.bmi < 25 && "Normal weight"}
+                      {form.bmi >= 25 && form.bmi < 30 && "Overweight"}
+                      {form.bmi >= 30 && "Obese"}
+                    </p>
+                  )}
+                </div>
+              </div>
+            </Card>
 
-          <div className="space-y-4">
-            <InputField
-              label="Systolic Blood Pressure"
-              icon={<Activity size={18} className="text-gray-600" />}
-              value={form.ap_hi}
-              onChange={(v: any) => update("ap_hi", v)}
-              unit="mmHg"
-              min={70}
-              max={250}
-              hint="Upper reading"
-            />
+            {/* Clinical */}
+            <Card>
+              <SectionHeader
+                icon={<Stethoscope />}
+                title="Clinical Vitals"
+                subtitle="Blood pressure and lab results"
+              />
+              <div className="grid md:grid-cols-2 gap-5 py-6">
+                <Input
+                  label="Systolic BP (mmHg)"
+                  type="number"
+                  placeholder="e.g., 120"
+                  value={form.ap_hi}
+                  onChange={(e) =>
+                    update(
+                      "ap_hi",
+                      e.target.value === "" ? "" : +e.target.value
+                    )
+                  }
+                />
+                <Input
+                  label="Diastolic BP (mmHg)"
+                  type="number"
+                  placeholder="e.g., 80"
+                  value={form.ap_lo}
+                  onChange={(e) =>
+                    update(
+                      "ap_lo",
+                      e.target.value === "" ? "" : +e.target.value
+                    )
+                  }
+                />
+                <Select
+                  label="Cholesterol Level"
+                  value={form.cholesterol}
+                  onChange={(e) => update("cholesterol", +e.target.value)}
+                  options={[
+                    { value: 1, label: "Normal" },
+                    { value: 2, label: "Above Normal" },
+                    { value: 3, label: "Well Above Normal" },
+                  ]}
+                />
+                <Select
+                  label="Glucose Level"
+                  value={form.gluc}
+                  onChange={(e) => update("gluc", +e.target.value)}
+                  options={[
+                    { value: 1, label: "Normal" },
+                    { value: 2, label: "Above Normal" },
+                    { value: 3, label: "Well Above Normal" },
+                  ]}
+                />
+              </div>
+            </Card>
 
-            <InputField
-              label="Diastolic Blood Pressure"
-              icon={<Activity size={18} className="text-gray-600" />}
-              value={form.ap_lo}
-              onChange={(v: any) => update("ap_lo", v)}
-              unit="mmHg"
-              min={40}
-              max={150}
-              hint="Lower reading"
-            />
+            {/* Lifestyle */}
+            <Card>
+              <SectionHeader
+                icon={<Bike />}
+                title="Lifestyle Factors"
+                subtitle="Daily habits and activities"
+              />
+              <div className="py-6 space-y-3">
+                <Toggle
+                  label="Smoker"
+                  active={form.smoke === 1}
+                  onClick={() => update("smoke", form.smoke ? 0 : 1)}
+                  icon={<Cigarette />}
+                />
+                <Toggle
+                  label="Alcohol Consumption"
+                  active={form.alco === 1}
+                  onClick={() => update("alco", form.alco ? 0 : 1)}
+                  icon={<Wine />}
+                />
+                <Toggle
+                  label="Physically Active"
+                  active={form.active === 1}
+                  onClick={() => update("active", form.active ? 0 : 1)}
+                  icon={<Activity />}
+                />
+              </div>
+            </Card>
 
-            <SelectField
-              label="Cholesterol Level"
-              icon={<Droplets size={18} className="text-gray-600" />}
-              value={form.cholesterol}
-              onChange={(v: any) => update("cholesterol", v)}
+            <button
+              onClick={submit}
+              disabled={loading}
+              className="w-full flex items-center justify-center gap-3 bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-500 hover:to-blue-500 text-white font-bold py-5 rounded-2xl shadow-lg shadow-indigo-200 hover:shadow-xl hover:shadow-indigo-300 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              <option value={1}>Normal</option>
-              <option value={2}>Above Normal</option>
-              <option value={3}>Well Above Normal</option>
-            </SelectField>
+              {loading ? (
+                <>
+                  <Loader2 className="animate-spin" size={20} />
+                  Analyzing Risk Profile…
+                </>
+              ) : (
+                <>
+                  Run Prediction
+                  <ArrowRight size={20} />
+                </>
+              )}
+            </button>
 
-            <SelectField
-              label="Glucose Level"
-              icon={<Droplets size={18} className="text-gray-600" />}
-              value={form.gluc}
-              onChange={(v: any) => update("gluc", v)}
-            >
-              <option value={1}>Normal</option>
-              <option value={2}>Above Normal</option>
-              <option value={3}>Well Above Normal</option>
-            </SelectField>
-          </div>
-        </Card>
-      </div>
+            {error && (
+              <div className="flex items-center gap-3 p-4 bg-rose-50 border border-rose-200 text-rose-700 rounded-xl">
+                <AlertCircle size={20} className="flex-shrink-0" />
+                <span className="font-medium">{error}</span>
+              </div>
+            )}
+          </>
+        )}
 
-      {/* Lifestyle Factors */}
-      <Card>
-        <div className="flex items-center gap-3 mb-6">
-          <div className="p-2 bg-green-50 rounded-lg">
-            <Bike className="text-green-600" size={24} />
-          </div>
-          <h3 className="text-xl font-bold text-gray-900">Lifestyle Factors</h3>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <ToggleField
-            label="Smoking"
-            icon={<Cigarette size={20} />}
-            description="Do you smoke cigarettes?"
-            value={form.smoke}
-            onChange={(v: any) => update("smoke", v)}
-          />
-
-          <ToggleField
-            label="Alcohol Consumption"
-            icon={<Wine size={20} />}
-            description="Regular alcohol intake?"
-            value={form.alco}
-            onChange={(v: any) => update("alco", v)}
-          />
-
-          <ToggleField
-            label="Physical Activity"
-            icon={<Bike size={20} />}
-            description="Regular exercise routine?"
-            value={form.active}
-            onChange={(v: any) => update("active", v)}
-          />
-        </div>
-      </Card>
-
-      {/* Error Message */}
-      {error && (
-        <div className="p-4 rounded-lg bg-red-50 border-2 border-red-500">
-          <div className="flex items-start gap-3">
-            <AlertCircle
-              className="text-red-500 flex-shrink-0 mt-0.5"
-              size={20}
+        {/* ---------------- RESULT SECTION ---------------- */}
+        {result && (
+          <div ref={resultRef}>
+            <PredictionResult
+              result={result}
+              inputData={{
+                Age: Number(form.age),
+                Gender: form.gender === 1 ? "Male" : "Female",
+                Height: `${form.height} cm`,
+                Weight: `${form.weight} kg`,
+                BMI: form.bmi,
+                "Systolic BP": `${form.ap_hi} mmHg`,
+                "Diastolic BP": `${form.ap_lo} mmHg`,
+                Cholesterol:
+                  form.cholesterol === 1
+                    ? "Normal"
+                    : form.cholesterol === 2
+                    ? "Above Normal"
+                    : "Well Above Normal",
+                Glucose:
+                  form.gluc === 1
+                    ? "Normal"
+                    : form.gluc === 2
+                    ? "Above Normal"
+                    : "Well Above Normal",
+                Smoker: form.smoke ? "Yes" : "No",
+                Alcohol: form.alco ? "Yes" : "No",
+                "Physically Active": form.active ? "Yes" : "No",
+              }}
+              onReset={() => {
+                setResult(null);
+                window.scrollTo({ top: 0, behavior: "smooth" });
+              }}
             />
-            <div>
-              <p className="font-semibold text-gray-900">Prediction Error</p>
-              <p className="text-sm text-gray-600 mt-1">{error}</p>
-            </div>
           </div>
-        </div>
-      )}
-
-      {/* Submit Button */}
-      <div className="flex justify-end">
-        <button
-          onClick={submit}
-          disabled={loading}
-          className={`
-            flex items-center gap-3 px-8 py-4 rounded-xl font-semibold text-lg text-white transition-all duration-200
-            ${
-              loading
-                ? "bg-gray-400 cursor-not-allowed"
-                : "bg-indigo-600 hover:bg-indigo-700 shadow-lg hover:shadow-xl hover:scale-105"
-            }
-          `}
-        >
-          {loading ? (
-            <>
-              <Loader2 size={24} className="animate-spin" />
-              Generating Prediction...
-            </>
-          ) : (
-            <>
-              <Heart size={24} />
-              Predict Cardiovascular Risk
-              <ArrowRight size={24} />
-            </>
-          )}
-        </button>
-      </div>
-    </div>
-  );
-}
-
-/* ============ REUSABLE FORM COMPONENTS ============ */
-
-function InputField({
-  label,
-  icon,
-  value,
-  onChange,
-  unit,
-  min,
-  max,
-  hint,
-}: any) {
-  return (
-    <div>
-      <label className="block text-sm font-semibold text-gray-900 mb-2">
-        {label}
-      </label>
-      <div className="relative">
-        <div className="absolute left-3 top-1/2 -translate-y-1/2">{icon}</div>
-        <input
-          type="number"
-          min={min}
-          max={max}
-          value={value === 0 ? "" : value}
-          onChange={(e) =>
-            onChange(e.target.value === "" ? 0 : Number(e.target.value))
-          }
-          placeholder="Enter value"
-          className="w-full pl-10 pr-16 py-3 border border-gray-200 rounded-lg bg-white text-gray-900 font-medium focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:border-transparent transition-all placeholder:text-gray-300"
-        />
-        {unit && (
-          <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-gray-400 font-medium">
-            {unit}
-          </span>
         )}
       </div>
-      {hint && <p className="text-xs text-gray-400 mt-1">{hint}</p>}
     </div>
   );
 }
 
-function SelectField({ label, icon, value, onChange, children }: any) {
+/* ---------------- HELPER COMPONENTS ---------------- */
+
+function SectionHeader({ icon, title, subtitle }: SectionHeaderProps) {
   return (
-    <div>
-      <label className="block text-sm font-semibold text-gray-900 mb-2">
-        {label}
-      </label>
-      <div className="relative">
-        <div className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none">
+    <div className="space-y-2">
+      <div className="flex items-center gap-3">
+        <div className="p-2.5 bg-gradient-to-br from-slate-900 to-slate-700 text-white rounded-xl shadow-sm">
           {icon}
         </div>
-        <select
-          value={value}
-          onChange={(e) => onChange(Number(e.target.value))}
-          className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-lg bg-white text-gray-900 font-medium appearance-none focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:border-transparent transition-all cursor-pointer"
-        >
-          {children}
-        </select>
-        <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
-          <svg
-            width="12"
-            height="8"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M1 1.5l5 5 5-5"
-              stroke="#9CA3AF"
-              strokeWidth="2"
-              strokeLinecap="round"
-            />
-          </svg>
-        </div>
+        <h2 className="text-2xl font-bold text-slate-900">{title}</h2>
       </div>
+      {subtitle && <p className="text-sm text-slate-500 ml-12">{subtitle}</p>}
     </div>
   );
 }
 
-function ToggleField({ label, icon, description, value, onChange }: any) {
-  const isActive = value === 1;
-
+function Toggle({ label, active, onClick, icon }: ToggleProps) {
   return (
     <div
-      onClick={() => onChange(isActive ? 0 : 1)}
-      className={`
-        p-4 rounded-lg border-2 cursor-pointer transition-all duration-200
-        ${
-          isActive
-            ? "border-indigo-600 bg-indigo-50"
-            : "border-gray-200 bg-white hover:border-gray-400"
-        }
-      `}
+      onClick={onClick}
+      className={`group flex items-center justify-between p-4 rounded-xl border-2 cursor-pointer transition-all duration-200 ${
+        active
+          ? "bg-gradient-to-r from-indigo-50 to-blue-50 border-indigo-300 shadow-sm"
+          : "bg-white border-slate-200 hover:border-slate-300 hover:shadow-sm"
+      }`}
     >
-      <div className="flex items-start justify-between mb-2">
+      <div className="flex items-center gap-4">
         <div
-          className={`p-2 rounded-lg ${
-            isActive ? "bg-indigo-600" : "bg-gray-200"
+          className={`p-2.5 rounded-lg transition-all duration-200 ${
+            active
+              ? "bg-gradient-to-br from-indigo-600 to-blue-600 text-white shadow-md"
+              : "bg-slate-100 text-slate-500 group-hover:bg-slate-200"
           }`}
         >
-          <div className={isActive ? "text-white" : "text-gray-600"}>
-            {icon}
-          </div>
+          {icon}
         </div>
-        <div
-          className={`
-            w-12 h-6 rounded-full relative transition-all duration-200
-            ${isActive ? "bg-indigo-600" : "bg-gray-200"}
-          `}
+        <span
+          className={`font-semibold ${
+            active ? "text-slate-900" : "text-slate-700"
+          }`}
         >
-          <div
-            className={`
-              absolute top-1 w-4 h-4 bg-white rounded-full transition-all duration-200
-              ${isActive ? "left-7" : "left-1"}
-            `}
-          />
-        </div>
+          {label}
+        </span>
       </div>
-      <p
-        className={`font-semibold mb-1 ${
-          isActive ? "text-indigo-600" : "text-gray-900"
+      <div
+        className={`w-12 h-6 rounded-full transition-all duration-200 relative ${
+          active ? "bg-indigo-600" : "bg-slate-300"
         }`}
       >
-        {label}
-      </p>
-      <p className="text-xs text-gray-600">{description}</p>
+        <div
+          className={`absolute top-0.5 w-5 h-5 bg-white rounded-full shadow-sm transition-all duration-200 ${
+            active ? "right-0.5" : "left-0.5"
+          }`}
+        />
+      </div>
     </div>
   );
 }

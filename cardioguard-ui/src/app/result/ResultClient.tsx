@@ -1,266 +1,367 @@
+// "use client";
+
+// export const dynamic = "force-dynamic";
+
+// import {
+//   AlertTriangle,
+//   CheckCircle2,
+//   Activity,
+//   RefreshCw,
+//   Info,
+// } from "lucide-react";
+
+// import type { PredictionResponse } from "../../lib/predictionSchema";
+
+// type PredictionResultProps = {
+//   result: PredictionResponse;
+//   onReset?: () => void;
+// };
+
+// export function PredictionResult({ result, onReset }: PredictionResultProps) {
+//   /* ---------- HARD VALIDATION ---------- */
+//   if (typeof result.probability !== "number" || isNaN(result.probability)) {
+//     return (
+//       <div className="p-8 bg-rose-50 border border-rose-200 rounded-2xl text-center">
+//         <p className="text-rose-700 font-semibold text-lg">
+//           Invalid Model Output
+//         </p>
+//         <p className="text-sm text-rose-600 mt-2">
+//           The AI service did not return a valid probability value.
+//         </p>
+//         {onReset && (
+//           <button
+//             onClick={onReset}
+//             className="mt-6 px-5 py-2.5 bg-rose-600 text-black rounded-xl font-semibold"
+//           >
+//             Start New Assessment
+//           </button>
+//         )}
+//       </div>
+//     );
+//   }
+
+//   const rawProbability = result.probability;
+
+//   const probability = Math.min(
+//     100,
+//     Math.max(
+//       0,
+//       rawProbability <= 1
+//         ? Math.round(rawProbability * 100)
+//         : Math.round(rawProbability)
+//     )
+//   );
+
+//   const isHighRisk = probability > 50;
+
+//   const theme = isHighRisk
+//     ? {
+//         chart: "#fb7185",
+//         accent: "text-rose-400",
+//         Icon: AlertTriangle,
+//       }
+//     : {
+//         chart: "#34d399",
+//         accent: "text-emerald-400",
+//         Icon: CheckCircle2,
+//       };
+
+//   return (
+//     <div className="animate-slide-up">
+//       <section className="bg-white-900 rounded-3xl shadow-2xl overflow-hidden ring-1 ring-black/5">
+//         <div className="p-8 md:p-12">
+//           <div className="flex flex-col lg:flex-row gap-12 items-center">
+//             {/* Radial Probability */}
+//             <div className="relative w-64 h-64 flex items-center justify-center">
+//               <svg
+//                 className="absolute inset-0 w-full h-full -rotate-90"
+//                 viewBox="0 0 100 100"
+//               >
+//                 <circle
+//                   cx="50"
+//                   cy="50"
+//                   r="45"
+//                   fill="none"
+//                   // stroke="#1e293b"
+//                   strokeWidth="6"
+//                 />
+//                 <circle
+//                   cx="50"
+//                   cy="50"
+//                   r="45"
+//                   fill="none"
+//                   stroke={theme.chart}
+//                   strokeWidth="6"
+//                   strokeDasharray="283"
+//                   strokeDashoffset={283 - (283 * probability) / 100}
+//                   strokeLinecap="round"
+//                   className="transition-all duration-1000 ease-out"
+//                 />
+//               </svg>
+
+//               <div className="text-center">
+//                 <span className="text-6xl font-bold text-black">
+//                   {probability}%
+//                 </span>
+//                 <p className="text-xs text-white-400 uppercase tracking-widest mt-1">
+//                   Model Probability
+//                 </p>
+//               </div>
+//             </div>
+
+//             {/* Text */}
+//             <div className="flex-1 text-center lg:text-left space-y-5">
+//               <span
+//                 className={`inline-flex items-center gap-2 px-3 py-1 rounded-full border text-xs font-bold uppercase ${theme.accent}`}
+//               >
+//                 <Activity size={14} />
+//                 Model Prediction
+//               </span>
+
+//               <h2 className="text-3xl md:text-4xl font-bold text-black">
+//                 {isHighRisk ? "Elevated Risk Detected" : "Low Risk Profile"}
+//               </h2>
+
+//               <p className="text-lg text-white-400 max-w-2xl">
+//                 {isHighRisk
+//                   ? "The Gradient Boosting model detected patterns associated with elevated cardiovascular risk. This result is for screening purposes only."
+//                   : "The model did not detect significant cardiovascular risk patterns based on the provided data."}
+//               </p>
+
+//               {onReset && (
+//                 <button
+//                   onClick={onReset}
+//                   className="inline-flex items-center gap-2 px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-semibold"
+//                 >
+//                   Start New Assessment
+//                   <RefreshCw size={16} />
+//                 </button>
+//               )}
+//             </div>
+//           </div>
+//         </div>
+
+//         {/* Footer */}
+//         <div className="bg-black/20 p-6 border-t border-black/5 flex gap-3">
+//           <Info className="text-white-500 mt-0.5" size={16} />
+//           <p className="text-xs text-white-500 leading-relaxed">
+//             <strong>Medical Disclaimer:</strong> This AI-generated prediction is
+//             for educational purposes only and must not be used as a medical
+//             diagnosis.
+//           </p>
+//         </div>
+//       </section>
+//     </div>
+//   );
+// }
 "use client";
 
 export const dynamic = "force-dynamic";
 
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import dynamicImport from "next/dynamic";
-import Card from "./../../components/Card";
 import {
   AlertTriangle,
   CheckCircle2,
   Activity,
-  Shield,
-  TrendingUp,
   RefreshCw,
-  ArrowLeft,
-  Stethoscope,
-  Heart,
-  AlertCircle,
   Info,
+  Download,
+  ArrowLeft,
 } from "lucide-react";
 
-const RadialBarChart = dynamicImport(
-  () => import("recharts").then((mod) => mod.RadialBarChart),
-  { ssr: false }
-);
-const RadialBar = dynamicImport(
-  () => import("recharts").then((mod) => mod.RadialBar),
-  { ssr: false }
-);
-const PolarAngleAxis = dynamicImport(
-  () => import("recharts").then((mod) => mod.PolarAngleAxis),
-  { ssr: false }
-);
-const ResponsiveContainer = dynamicImport(
-  () => import("recharts").then((mod) => mod.ResponsiveContainer),
-  { ssr: false }
-);
+import type { PredictionResponse } from "../../lib/predictionSchema";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
 
-export default function ResultPage() {
-  const router = useRouter();
-  const [result, setResult] = useState<any>(null);
-  const [isClient, setIsClient] = useState(false);
+type PredictionResultProps = {
+  result: PredictionResponse;
+  inputData: Record<string, any>;
+  onReset?: () => void;
+};
 
-  useEffect(() => {
-    setIsClient(true);
-    const data = localStorage.getItem("prediction");
-
-    if (!data) {
-      router.push("/predict");
-      return;
-    }
-
-    try {
-      setResult(JSON.parse(data));
-    } catch {
-      router.push("/predict");
-    }
-  }, [router]);
-
-  if (!isClient || !result) {
+export function PredictionResult({
+  result,
+  inputData,
+  onReset,
+}: PredictionResultProps) {
+  /* ---------- HARD VALIDATION ---------- */
+  if (typeof result.probability !== "number" || isNaN(result.probability)) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-center">
-          <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-gray-200 border-t-indigo-600 mb-4"></div>
-          <p className="text-gray-600">Loading prediction result...</p>
-        </div>
+      <div className="p-8 bg-rose-50 border border-rose-200 rounded-2xl text-center">
+        <p className="text-rose-700 font-semibold text-lg">
+          Invalid Model Output
+        </p>
+        <p className="text-sm text-rose-600 mt-2">
+          The AI service did not return a valid probability value.
+        </p>
+        {onReset && (
+          <button
+            onClick={onReset}
+            className="mt-6 px-5 py-2.5 bg-rose-600 text-black rounded-xl font-semibold"
+          >
+            Start New Assessment
+          </button>
+        )}
       </div>
     );
   }
 
-  const isHigh = result.risk === "High Risk";
-  const confidence = result.confidence
-    ? Math.round(result.confidence * 100)
-    : null;
+  /* ---------- PROBABILITY NORMALIZATION ---------- */
+  const rawProbability = result.probability;
 
-  const chartData = confidence
-    ? [
-        {
-          name: "Confidence",
-          value: confidence,
-          fill: isHigh ? "#EF4444" : "#22C55E",
-        },
-      ]
-    : [];
+  const probability = Math.min(
+    100,
+    Math.max(
+      0,
+      rawProbability <= 1
+        ? Math.round(rawProbability * 100)
+        : Math.round(rawProbability)
+    )
+  );
+
+  const isHighRisk = probability > 50;
+
+  const theme = isHighRisk
+    ? {
+        chart: "#fb7185",
+        accent: "text-rose-400",
+        Icon: AlertTriangle,
+      }
+    : {
+        chart: "#34d399",
+        accent: "text-emerald-400",
+        Icon: CheckCircle2,
+      };
+
+  /* ---------- PDF DOWNLOAD ---------- */
+  const handleDownloadPDF = () => {
+    const doc = new jsPDF();
+
+    // Title
+    doc.setFontSize(18);
+    doc.text("Cardiovascular Risk Assessment Report", 14, 20);
+
+    doc.setFontSize(11);
+    doc.text(`Generated on: ${new Date().toLocaleString()}`, 14, 28);
+
+    // Prediction summary
+    autoTable(doc, {
+      startY: 36,
+      head: [["Prediction Summary", "Value"]],
+      body: [
+        ["Risk Level", isHighRisk ? "High Risk" : "Low Risk"],
+        ["Model Probability", `${probability}%`],
+        ["Model Used", "Gradient Boosting Classifier"],
+      ],
+    });
+
+    // Input data table
+    const finalY = (doc as any).lastAutoTable?.finalY || 40;
+
+    autoTable(doc, {
+      startY: finalY + 10,
+      head: [["Input Parameter", "Value"]],
+      body: Object.entries(inputData),
+    });
+
+    // Disclaimer
+    doc.setFontSize(9);
+    doc.text(
+      "Medical Disclaimer: This AI-generated report is for educational purposes only and must not be used as a medical diagnosis.",
+      14,
+      doc.internal.pageSize.height - 12
+    );
+
+    doc.save("CardioGuard_AI_Report.pdf");
+  };
 
   return (
-    <div className="max-w-6xl mx-auto space-y-8">
-      {/* Header */}
-      <div className="text-center">
-        <div
-          className={`inline-flex items-center justify-center w-16 h-16 rounded-2xl mb-4 ${
-            isHigh ? "bg-red-50" : "bg-green-50"
-          }`}
-        >
-          {isHigh ? (
-            <AlertTriangle className="text-red-500" size={32} />
-          ) : (
-            <CheckCircle2 className="text-green-600" size={32} />
-          )}
-        </div>
-        <h2 className="text-3xl font-bold text-gray-900 mb-2">
-          Prediction Result
-        </h2>
-        <p className="text-gray-600">Based on the health data you provided</p>
-      </div>
-
-      {/* Main Result Cards */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Risk Assessment Card */}
-        <div
-          className={`rounded-xl border-2 p-8 ${
-            isHigh
-              ? "border-red-500 bg-gradient-to-br from-red-50 to-red-100"
-              : "border-green-600 bg-gradient-to-br from-green-50 to-green-100"
-          }`}
-        >
-          <div className="flex items-center gap-3 mb-4">
-            {isHigh ? (
-              <AlertTriangle className="text-red-500" size={28} />
-            ) : (
-              <CheckCircle2 className="text-green-600" size={28} />
-            )}
-            <h3 className="text-lg font-semibold text-gray-900">
-              Risk Assessment
-            </h3>
-          </div>
-
-          <div className="mb-6">
-            <p className="text-sm text-gray-600 mb-2">
-              Cardiovascular Risk Level
-            </p>
-            <p
-              className={`text-5xl font-bold ${
-                isHigh ? "text-red-500" : "text-green-600"
-              }`}
-            >
-              {result.risk}
-            </p>
-          </div>
-
-          <div className="space-y-3">
-            <div className="p-4 rounded-lg bg-white border">
-              <div className="flex items-start gap-2">
-                <Info
-                  className={`mt-0.5 ${
-                    isHigh ? "text-red-500" : "text-green-600"
-                  }`}
-                  size={18}
+    <div className="animate-slide-up">
+      <section className="bg-white-900 rounded-3xl shadow-2xl overflow-hidden ring-1 ring-black/5">
+        <div className="p-8 md:p-12">
+          <div className="flex flex-col lg:flex-row gap-12 items-center">
+            {/* Radial Probability */}
+            <div className="relative w-64 h-64 flex items-center justify-center">
+              <svg
+                className="absolute inset-0 w-full h-full -rotate-90"
+                viewBox="0 0 100 100"
+              >
+                <circle cx="50" cy="50" r="45" fill="none" strokeWidth="6" />
+                <circle
+                  cx="50"
+                  cy="50"
+                  r="45"
+                  fill="none"
+                  stroke={theme.chart}
+                  strokeWidth="6"
+                  strokeDasharray="283"
+                  strokeDashoffset={283 - (283 * probability) / 100}
+                  strokeLinecap="round"
+                  className="transition-all duration-1000 ease-out"
                 />
-                <p className="text-sm text-gray-600">
-                  This assessment is generated using a{" "}
-                  <span className="font-semibold">
-                    Gradient Boosting machine learning model
-                  </span>{" "}
-                  and is intended for decision support only.
+              </svg>
+
+              <div className="text-center">
+                <span className="text-6xl font-bold text-black">
+                  {probability}%
+                </span>
+                <p className="text-xs text-white-400 uppercase tracking-widest mt-1">
+                  Model Probability
                 </p>
               </div>
             </div>
 
-            <div className="p-4 rounded-lg bg-white border">
-              <div className="flex items-start gap-2">
-                <Stethoscope
-                  className={`mt-0.5 ${
-                    isHigh ? "text-red-500" : "text-green-600"
-                  }`}
-                  size={18}
-                />
-                <p className="text-sm text-gray-600">
-                  Always consult a certified healthcare professional.
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
+            {/* Text */}
+            <div className="flex-1 text-center lg:text-left space-y-5">
+              <span
+                className={`inline-flex items-center gap-2 px-3 py-1 rounded-full border text-xs font-bold uppercase ${theme.accent}`}
+              >
+                <Activity size={14} />
+                Model Prediction
+              </span>
 
-        {/* Confidence Gauge Card */}
-        <Card>
-          <div className="flex items-center gap-3 mb-6">
-            <Activity className="text-indigo-600" size={24} />
-            <h3 className="text-xl font-bold">Prediction Confidence</h3>
-          </div>
+              <h2 className="text-3xl md:text-4xl font-bold text-black">
+                {isHighRisk ? "Elevated Risk Detected" : "Low Risk Profile"}
+              </h2>
 
-          {confidence ? (
-            <div className="flex flex-col items-center">
-              {/* Only render the chart container on the client */}
-              <div className="w-full h-[240px]">
-                <ResponsiveContainer width="100%" height="100%">
-                  <RadialBarChart
-                    cx="50%"
-                    cy="50%"
-                    innerRadius="70%"
-                    outerRadius="90%"
-                    barSize={16}
-                    data={chartData}
-                    startAngle={180}
-                    endAngle={0}
+              <p className="text-lg text-white-400 max-w-2xl">
+                {isHighRisk
+                  ? "The Gradient Boosting model detected patterns associated with elevated cardiovascular risk. This result is for screening purposes only."
+                  : "The model did not detect significant cardiovascular risk patterns based on the provided data."}
+              </p>
+
+              <div className="flex flex-wrap gap-4">
+                {onReset && (
+                  <button
+                    onClick={onReset}
+                    className="inline-flex items-center gap-2 px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-semibold"
                   >
-                    <PolarAngleAxis
-                      type="number"
-                      domain={[0, 100]}
-                      tick={false}
-                    />
-                    <RadialBar
-                      background={{ fill: "#F3F4F6" }}
-                      dataKey="value"
-                      cornerRadius={10}
-                    />
-                  </RadialBarChart>
-                </ResponsiveContainer>
-              </div>
+                    Back
+                    <ArrowLeft size={16} />
+                  </button>
+                )}
 
-              <div className="text-center mt-4">
-                <p className="text-5xl font-bold text-gray-900">
-                  {confidence}%
-                </p>
-                <p className="text-sm text-gray-600">
-                  Model confidence in this prediction
-                </p>
+                <button
+                  onClick={handleDownloadPDF}
+                  className="inline-flex items-center gap-2 px-6 py-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-semibold"
+                >
+                  <Download size={16} />
+                  Save Report (PDF)
+                </button>
               </div>
             </div>
-          ) : (
-            <p className="text-center text-gray-400">
-              Confidence score not available
-            </p>
-          )}
-        </Card>
-      </div>
+          </div>
+        </div>
 
-      {/* Action Buttons */}
-      <div className="flex flex-wrap gap-4">
-        <button
-          onClick={() => router.push("/predict")}
-          className="flex items-center gap-2 px-6 py-3 rounded-lg border-2 border-indigo-600 text-indigo-600 font-semibold"
-        >
-          <RefreshCw size={20} />
-          New Assessment
-        </button>
-
-        <button
-          onClick={() => router.push("/")}
-          className="flex items-center gap-2 px-6 py-3 rounded-lg border-2 border-gray-200 text-gray-600 font-semibold"
-        >
-          <ArrowLeft size={20} />
-          Back to Dashboard
-        </button>
-
-        <button
-          onClick={() => router.push("/accuracy")}
-          className="flex items-center gap-2 px-6 py-3 rounded-lg bg-indigo-600 text-white font-semibold"
-        >
-          <Shield size={20} />
-          View Model Accuracy
-        </button>
-
-        <button
-          onClick={() => router.push("/insights")}
-          className="flex items-center gap-2 px-6 py-3 rounded-lg border-2 border-gray-200 text-gray-600 font-semibold"
-        >
-          <TrendingUp size={20} />
-          View Risk Factors
-        </button>
-      </div>
+        {/* Footer */}
+        <div className="bg-black/20 p-6 border-t border-black/5 flex gap-3">
+          <Info className="text-white-500 mt-0.5" size={16} />
+          <p className="text-xs text-white-500 leading-relaxed">
+            <strong>Medical Disclaimer:</strong> This AI-generated prediction is
+            for educational purposes only and must not be used as a medical
+            diagnosis.
+          </p>
+        </div>
+      </section>
     </div>
   );
 }
