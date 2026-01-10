@@ -677,7 +677,7 @@ import {
   AlertCircle,
 } from "lucide-react";
 
-import { PredictionResult } from "../result/ResultClient";
+import PredictionResult from "../result/ResultClient";
 import { PredictionResponse } from "../../lib/predictionSchema";
 
 type NumOrEmpty = number | "";

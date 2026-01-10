@@ -178,7 +178,7 @@ type PredictionResultProps = {
   onReset?: () => void;
 };
 
-export function PredictionResult({
+export default function PredictionResult({
   result,
   inputData,
   onReset,
