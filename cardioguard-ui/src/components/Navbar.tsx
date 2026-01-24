@@ -196,6 +196,7 @@ import {
   FileText,
   ShieldCheck,
   LayoutDashboard,
+  GitCompare,
 } from "lucide-react";
 
 export default function Navbar() {
@@ -215,6 +216,7 @@ export default function Navbar() {
     { href: "/accuracy", label: "Accuracy", icon: BarChart3 },
     { href: "/model", label: "Model", icon: ShieldCheck },
     { href: "/insights", label: "Insights", icon: FileText },
+    { href: "/comparison", label: "Comparison", icon: GitCompare },
   ];
 
   return (
